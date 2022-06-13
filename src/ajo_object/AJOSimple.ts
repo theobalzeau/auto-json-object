@@ -68,4 +68,8 @@ export default class AJOSimple extends AJOElement {
     }
     return list;
   }
+
+  public equals(data: { [key: string]: any }): boolean {
+    return false;
+  }
 }

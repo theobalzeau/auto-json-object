@@ -1,6 +1,4 @@
-import AJOInstance from './AJOInstance';
-import AJOMode from './AJOMode';
-import AJOUtils from './AJOUtils';
+import AJOObject from './AJOObject';
 
 /**
  * AJOElement is the base class for all AJO classes.
@@ -36,23 +34,8 @@ export default abstract class AJOElement {
     return this.ajoParent != null;
   }
 
-  public abstract equals(data: { [key: string]: any }): boolean;
-
-  public applyData2(data: { [key: string]: any }, applyParent: boolean = true): boolean {
-    let res = false;
-
-    let allChild: AJOElement[] = this.getAjoElementList(true);
-    let allJson: { [key: string]: any }[] = AJOUtils.getAllJsonObject(data);
-
-    for (const json of allJson) {
-      for (const child of allChild) {
-        if (child.equals(json)) {
-          res = child.applyData(json, applyParent) || res;
-        }
-      }
-    }
-    return false;
-  }
+  public abstract applyDataRec(data: { [key: string]: any }, first: boolean): boolean;
+  public abstract applyData(data: { [key: string]: any }): boolean;
 
   /**
    * Apply data to the object and its child conform to the mode of the AJOInstance
@@ -61,13 +44,12 @@ export default abstract class AJOElement {
    * @param applyParent true if the json was applyed to the parent
    * @returns {boolean} true if their is any change in the object or in the child
    */
-  public abstract applyData(data: { [key: string]: any }, applyParent: boolean): boolean;
+  /*public abstract applyData(data: { [key: string]: any }, applyParent: boolean): boolean;*/
 
-  /**
-   * Get all AjoElement in the object
-   * @returns {AJOElement[]}
-   */
-  public getAjoElementList(recursively: boolean = false): AJOElement[] {
+  public abstract getAjoIdentifier(): any;
+  protected abstract passToChild(data: { [key: string]: any }): boolean;
+
+  public getAJOElementList(recursively: boolean): AJOElement[] {
     // the list return
     const list: AJOElement[] = [];
     if (recursively) {
@@ -81,11 +63,11 @@ export default abstract class AJOElement {
       if (!AJOElement.PRIVATE_FIELD_LIST.includes(field)) {
         // get the value of the property
         const value = obj[field as keyof AJOElement];
-        // if the value is an AJOElement add to the list
+        // if the value is an AJOObject add to the list
         if (value instanceof AJOElement) {
           // get child recursively
           if (recursively) {
-            list.push(...value.getAjoElementList(recursively));
+            list.push(...value.getAJOElementList(recursively));
           } else {
             list.push(value);
           }
@@ -94,6 +76,7 @@ export default abstract class AJOElement {
     });
     return list;
   }
+  
 
   /**
    * Make the changes in the object
@@ -106,59 +89,6 @@ export default abstract class AJOElement {
         this.update();
       }
     }
-  }
-
-  /**
-   * Apply data to the object and its child conform to the mode of the AJOInstance
-   * return true if their is any change in the hierarchy
-   * @param data the json souce
-   * @param applyParent true if the json was applyed to the parent
-   * @returns {boolean} true if their is any change in the object or in the child
-   */
-  public applyAjoPolicy(data: any, applyParent: boolean = false): boolean {
-    // boolean that indicates if the object has changed
-    let res = false;
-
-    // If the data was applied to the parent
-    // Or the AJOInstance mode is JSON_TO_ALL_OBJECT
-    if (applyParent) {
-      let i = 0;
-      // get all child of this object
-      const list = this.getAjoElementList();
-      // number of child
-      const len = list.length;
-      for (i; i < len; i++) {
-        // for each child
-        const ajoElement: AJOElement = list[i];
-        // apply the data to the child
-        res = ajoElement.applyData(data, applyParent) || res;
-      }
-    }
-    // If the AJOInstance mode is ALL_JSON_TO_ALL_OBJECT
-    if (AJOInstance.getMode() === AJOMode.ALL_JSON_TO_ALL_OBJECT) {
-      // get all sub document of the json source
-      const allObject = AJOUtils.getAllJsonObject(data);
-
-      let i = 0;
-      // get all child of this object
-      const list = this.getAjoElementList();
-      // number of child
-      const len = list.length;
-
-      for (i; i < len; i++) {
-        // for each child
-        const ajoElement: AJOElement = list[i];
-        // apply all subdocument to the child
-        let j = 0;
-        for (j = 0; j < allObject.length; j++) {
-          const obj = allObject[j];
-          res = ajoElement.applyData(obj, applyParent) || res;
-        }
-      }
-    }
-
-    // return the result
-    return res;
   }
 
   /**
@@ -192,4 +122,7 @@ export default abstract class AJOElement {
   public setUpdate(update: (() => void) | null) {
     this.update = update;
   }
+}
+function delay(ms: number) {
+  return new Promise( resolve => setTimeout(resolve, ms) );
 }

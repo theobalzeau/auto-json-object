@@ -1,15 +1,10 @@
 import AJOElement from './AJOElement';
+import AJOField from './AJOField';
+import AJOObject from './AJOObject';
 /**
  * AJOProperties is the class that contains simple variable in AJOObject
  */
-export default class AJOProperties extends AJOElement {
-  /**
-   * Variable field contains the field in the json source
-   * where the value of this AJOProperties is stored
-   * @type {string}
-   */
-  private field: string;
-
+export default class AJOProperties extends AJOField {
   /**
    * Variable value contains the value of this AJOProperties
    * @type {any}
@@ -31,23 +26,14 @@ export default class AJOProperties extends AJOElement {
    * @param value optionnal parameter, the value of this AJOProperties
    */
   public constructor(
-    field: string,
+    field: string[] | string | null = null,
     ajoParent: AJOElement | null = null,
     overrideOnUndefined: boolean = true,
     value?: any,
   ) {
-    super(ajoParent);
-    this.field = field;
+    super(field, ajoParent);
     this.value = value;
     this.overrideOnUndefined = overrideOnUndefined;
-  }
-
-  /**
-   * Get the field of this object
-   * @returns {string} the field of this object
-   */
-  public getField(): string {
-    return this.field;
   }
 
   /**
@@ -94,36 +80,29 @@ export default class AJOProperties extends AJOElement {
     return res;
   }
 
-  /**
-   * Apply data to the object and its child conform to the mode of the AJOInstance
-   * return true if their is any change in the hierarchy
-   * @param data the json souce
-   * @param applyParent true if the json was applyed to the parent
-   * @returns {boolean} true if their is any change in the object or in the child
-   */
-  public override applyData(data: { [key: string]: any }, applyParent: boolean = true): boolean {
+  public override applyDataRec(data: { [key: string]: any }, first : boolean): boolean {
     // boolean that indicates if the object has changed
     let res = false;
 
-    // change data only if the parent fit the json source
-    if (applyParent) {
-      // check if the data exist and if the value is different from the json source
-      if (data !== undefined && data[this.getField()] !== this.get()) {
-        // data in json source is undefined
-        if (data[this.getField()] === undefined) {
-          // Change the value only if the overrideOnUndefined is true
-          if (this.isOverrideOnUndefined()) {
-            res = this.set(undefined);
-          }
-        } else {
-          // Change the value
-          res = this.set(data[this.getField()]);
+    let found = false;
+    let value = undefined;
+    let i = 0;
+    while (!found && i < this.fieldList.length) {
+      if (this.fieldList[i] in data) {
+        if (this.fieldList[i] == undefined && this.isOverrideOnUndefined()) {
+          found = true;
+          value = data[this.fieldList[i]];
+        }
+        if (this.fieldList[i] != undefined) {
+          found = true;
+          value = data[this.fieldList[i]];
         }
       }
+      i++;
     }
-
-    // Apply the data to the child
-    //res = super.applyAjoPolicy(data, applyParent) || res;
+    if (found) {
+      res = this.set(value);
+    }
 
     // Make the update
     super.makeUpdate(res);
@@ -132,7 +111,18 @@ export default class AJOProperties extends AJOElement {
     return res;
   }
 
-  public equals(data: { [key: string]: any }): boolean {
+  /**
+   * Apply data to the object and its child conform to the mode of the AJOInstance
+   * return true if their is any change in the hierarchy
+   * @param data the json souce
+   * @param applyParent true if the json was applyed to the parent
+   * @returns {boolean} true if their is any change in the object or in the child
+   */
+  public override applyData(data: { [key: string]: any }): boolean {
+    return this.applyDataRec(data, false);
+  }
+
+  protected override passToChild(data: { [key: string]: any }): boolean {
     return false;
   }
 }

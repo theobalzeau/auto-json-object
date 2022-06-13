@@ -1,23 +1,14 @@
-import AJOInstance from './AJOInstance';
 import AJOElement from './AJOElement';
+import AJOField from './AJOField';
+import AJOInstance from './AJOInstance';
 import AJOObject from './AJOObject';
 
-/**
- * AJOList represent a list of an AJOObject (json array)
- */
-export default class AJOList extends AJOElement {
+export default class AJOList extends AJOField {
   /**
    * Variable list contains all AJOObject of this AJOList
    * @type {AJOObject[]}
    */
   private list: AJOObject[];
-
-  /**
-   * Variable field contains all the field in the json source
-   * where the value of this AJOList is stored
-   * @type {string[]}
-   */
-  private fieldList: string[];
 
   /**
    * Variable sortFunc contains the function to sort the list on each update
@@ -36,14 +27,7 @@ export default class AJOList extends AJOElement {
     ajoParent: AJOElement | null = null,
     sortFunc: ((a: AJOObject, b: AJOObject) => number) | null = null,
   ) {
-    super(ajoParent);
-    if (field === null) {
-      this.fieldList = [];
-    } else if (typeof field === 'string') {
-      this.fieldList = [field];
-    } else {
-      this.fieldList = field;
-    }
+    super(field, ajoParent);
     this.sortFunc = sortFunc;
     this.list = [];
   }
@@ -89,7 +73,6 @@ export default class AJOList extends AJOElement {
   public size(): number {
     return this.list.length;
   }
-
   private applyArray(array: any): boolean {
     let res = false;
     if (!(array instanceof Array)) {
@@ -131,92 +114,58 @@ export default class AJOList extends AJOElement {
         }
       } else {
         // element exists
-        if (elem[AJOInstance.getDeleteField()] !== undefined) {
+        if (elem[AJOInstance.getDeleteField()] === true ||
+        elem[AJOInstance.getDeleteField()] === this.getAjoIdentifier()) {
           // delete the element
           res = true;
           this.remove(i);
         } else {
           // update the element
-          res = ajoElem.applyData(elem) || res;
+          res = ajoElem.applyDataRec(elem, false) || res;
         }
       }
     }
     return res;
   }
-
-  /**
-   * Apply data to the object and its child conform to the mode of the AJOInstance
-   * return true if their is any change in the hierarchy
-   * @param data the json souce
-   * @param applyParent true if the json was applyed to the parent
-   * @returns {boolean} true if their is any change in the object or in the child
-   */
-  public override applyData(data: any, applyParent: boolean = true): boolean {
+  public applyDataRec(data: { [key: string]: any; }, first: boolean): boolean {
     // boolean that indicates if the object has changed
     let res = false;
 
     // go throw json source only if the data was applyed to the parent
     if (!this.hasParent()) {
       res = this.applyArray(data) || res;
-    } else if (applyParent) {
+    } else if (first) {
       // get the json array for all field
       for (const field of this.fieldList) {
         // current json document
         if (!(data instanceof Array)) {
           const array = data[field];
-
           res = this.applyArray(array) || res;
         } else {
           res = this.applyArray(data) || res;
         }
       }
     }
-
-    // Make the update
-    res = super.applyAjoPolicy(data) || res;
-    super.makeUpdate(res);
-
-    // return the result
     return res;
   }
-  /**
-   * Make the changes in the object
-   * If there change call the update function
-   * @param change
-   */
-  public makeUpdate(change: boolean) {
-    super.makeUpdate(change);
-    if (change) {
-      this.sort();
-    }
+  public applyData(data: { [key: string]: any }) {
+    return false;
   }
 
-  /**
-   * Function used to map the list of AJOList
-   * @param func thge function to map
-   */
-  public map(func: (elem: AJOObject) => any): any {
-    return this.list.map(func);
+  protected override passToChild(data: { [key: string]: any }): boolean {
+    return false;
   }
 
-  /**
-   * Get all AJOElement in the object
-   * @returns {AJOElement[]}
-   */
-  public override getAjoElementList(recursively: boolean = false): AJOElement[] {
-    const list: AJOElement[] = [];
-    for (const elem of this.list) {
-      list.push(elem);
-    }
+  public override getAJOElementList(recursively: boolean): AJOElement[] {
+    let list: AJOElement[] = [...this.list];
     if (recursively) {
-      for (const elem of this.list) {
-        list.push(...elem.getAjoElementList());
+      for (let i = 0; i < this.list.length; i++) {
+        let childList = this.list[i].getAJOElementList(recursively);
+        for (let j = 0; j < childList.length; j++) {
+          list.push(childList[j]);
+        }
       }
     }
     return list;
-  }
-
-  public equals(data: { [key: string]: any }): boolean {
-    return false;
   }
 }

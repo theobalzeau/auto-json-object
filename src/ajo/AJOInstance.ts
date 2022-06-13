@@ -1,4 +1,3 @@
-import AJOMode from './AJOMode';
 import AJOObject from './AJOObject';
 
 /**
@@ -49,13 +48,6 @@ export default class AJOInstance {
   private deepEqual: boolean;
 
   /**
-   * Variable mode inform the AJOInstance if
-   * on to pass data to child in AJOElement
-   * @type {AJOMode}
-   */
-  private mode: AJOMode;
-
-  /**
    * Constructor of AJOInstance
    * Define all default value of AJOInstance
    */
@@ -65,7 +57,6 @@ export default class AJOInstance {
     this.typeField = '_type';
     this.deleteField = '_id_del';
     this.deepEqual = true;
-    this.mode = AJOMode.FIX_TO_MODOL;
   }
 
   /**
@@ -119,15 +110,6 @@ export default class AJOInstance {
   public static setDeepEqual(deleteField: string) {
     AJOInstance.get().deleteField = deleteField;
   }
-
-  /**
-   * Change the mode of the global AJOInstance
-   * @param mode the new mode
-   */
-  public static setMode(mode: AJOMode) {
-    AJOInstance.get().mode = mode;
-  }
-
   /**
    * Get the identifierField of global AJOInstance
    * @returns {string} the identifierField
@@ -150,14 +132,6 @@ export default class AJOInstance {
    */
   public static getDeleteField(): string {
     return AJOInstance.get().deleteField;
-  }
-
-  /**
-   * Get the mode of global AJOInstance
-   * @returns {AJOMode} the mode
-   */
-  public static getMode(): AJOMode {
-    return AJOInstance.get().mode;
   }
 
   /**
