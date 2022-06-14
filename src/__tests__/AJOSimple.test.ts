@@ -3,22 +3,23 @@ import AJOObject from '../ajo/AJOObject';
 import AJOProperties from '../ajo/AJOProperties';
 import AJOList from '../ajo/AJOList';
 import AJOInstance from '../ajo/AJOInstance';
+import AJOSimple from '../ajo/AJOSimple';
 /**
  * Exemple of an AJOObject that will
  * be stored in a AJOList
  */
-class Comment extends AJOObject {
-  static override _TYPE: string = 'Comment';
+class Role extends AJOObject {
+  static override _TYPE: string = 'Role';
 
   text: AJOProperties;
 
   constructor(ajoParent: AJOElement | null = null, ajoIdentifier?: any) {
-    super(Comment._TYPE, ajoParent, ajoIdentifier);
+    super(Role._TYPE, ajoParent, ajoIdentifier);
     this.text = new AJOProperties('text', this);
   }
 
   public static build() {
-    return new Comment();
+    return new Role();
   }
 }
 /**
@@ -28,12 +29,12 @@ class User extends AJOObject {
   static override _TYPE: string = 'User';
 
   name: AJOProperties;
-  commentList: AJOList;
+  role: AJOSimple;
 
   constructor(ajoParent: AJOElement | null = null, ajoIdentifier?: any) {
     super(User._TYPE, ajoParent, ajoIdentifier);
     this.name = new AJOProperties('name', this);
-    this.commentList = new AJOList('comment', this);
+    this.role = new AJOSimple('role', this);
   }
 
   public static build() {
@@ -44,7 +45,7 @@ class User extends AJOObject {
 /**
  * Test for AJOList
  */
-AJOInstance.add(Comment.build());
+AJOInstance.add(Role.build());
 AJOInstance.setIdentifierField('_id');
 AJOInstance.setTypeField('_type');
 AJOInstance.setDeleteField('_ajo_delete');
@@ -99,39 +100,16 @@ test("AJOList (2) list in object", () => {
         _id: "1",
         name: "theobalzeau",
         _type: "User",
-        comment: [
+        role: [
             {
                 _id: "1",
-                _type: "Comment",
+                _type: "Role",
                 text: "text1"
-            },
-            {
-                _id: "2",
-                _type: "Comment",
-                text: "text2"
-            },
-            {
-                _id: "3",
-                _type: "Comment",
-                text: "text3"
             }
         ]
     }
     let userAjo = new User();
     // first fit
     userAjo.applyData(userJson);
-    // delete 1 element
-    let delJson1 = {
-        _id: "1",
-        _ajo_delete: "1",
-        _type: "Comment"
-    }
-    userAjo.applyData(delJson1);
-    let delJson2 = {
-        _id: "3",
-        _type: "Comment",
-        text: "text3updated"
-    }
-    userAjo.applyData(delJson2);
-    expect((userAjo.commentList.get(1) as Comment).text.get()).toBe("text3updated");
+    expect((userAjo.role.get() as Role).text.get()).toBe("text3updated");
 });

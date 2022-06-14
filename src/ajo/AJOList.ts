@@ -127,7 +127,7 @@ export default class AJOList extends AJOField {
     }
     return res;
   }
-  public applyDataRec(data: { [key: string]: any; }, first: boolean): boolean {
+  public override applyDataRec(data: { [key: string]: any; }, first: boolean): boolean {
     // boolean that indicates if the object has changed
     let res = false;
 
