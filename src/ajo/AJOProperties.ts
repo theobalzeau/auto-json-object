@@ -80,7 +80,7 @@ export default class AJOProperties extends AJOField {
     return res;
   }
 
-  public override applyDataRec(data: { [key: string]: any }, first : boolean): boolean {
+  public override applyDataRec(data: { [key: string]: any }, first: boolean): boolean {
     // boolean that indicates if the object has changed
     let res = false;
 
@@ -120,9 +120,5 @@ export default class AJOProperties extends AJOField {
    */
   public override applyData(data: { [key: string]: any }): boolean {
     return this.applyDataRec(data, false);
-  }
-
-  protected override passToChild(data: { [key: string]: any }): boolean {
-    return false;
   }
 }

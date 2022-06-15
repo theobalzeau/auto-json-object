@@ -126,15 +126,13 @@ export default abstract class AJOObject extends AJOElement {
         this.setAjoIdentifier(ajoIdentifier);
       }
     }
-    console.log("HERE2 : ", first)
 
     if (first && this.getAjoParent() instanceof AJOField) {
       let parent = this.getAjoParent() as AJOField;
-      console.log("HERE3")
-      console.log(data)
-      let json : any = {}
-      json[parent.getField()] = data
-      parent.applyDataRec(json, true)
+
+      let json: any = {};
+      json[parent.getField()] = data;
+      parent.applyDataRec(json, true);
     }
 
     if (applyData) {
@@ -147,7 +145,7 @@ export default abstract class AJOObject extends AJOElement {
     return res;
   }
 
-  protected override passToChild(data: { [key: string]: any }) {
+  private passToChild(data: { [key: string]: any }) {
     let res = false;
     const list = this.getAJOElementList(false);
     // number of child
@@ -166,7 +164,7 @@ export default abstract class AJOObject extends AJOElement {
    * @returns {AJOObject[]}
    */
   public getAJOObjectList(recursively: boolean): AJOObject[] {
-    let listAJOObject: AJOObject[] = [];
+    let listAJOObject: AJOObject[] = [this];
     let listAJOElement: AJOElement[] = this.getAJOElementList(recursively);
     for (const ajoElement of listAJOElement) {
       if (ajoElement instanceof AJOObject) {
@@ -184,16 +182,13 @@ export default abstract class AJOObject extends AJOElement {
    */
   public override applyData(data: { [key: string]: any }): boolean {
     let res = false;
-    
+
     let allObject: AJOObject[] = this.getAJOObjectList(true);
     let allJson: { [key: string]: any }[] = AJOUtils.getAllJsonObject(data);
-    
-    console.log(allObject)
+
     for (const json of allJson) {
       for (const child of allObject) {
         if (child.equals(json)) {
-          console.log("HERE1")
-          console.log(json)
           res = child.applyDataRec(json, true) || res;
         }
       }

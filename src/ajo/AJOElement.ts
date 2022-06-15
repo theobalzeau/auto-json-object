@@ -49,14 +49,10 @@ export default abstract class AJOElement {
 
   public abstract getAjoIdentifier(): any;
   public abstract getAjoType(): any;
-  protected abstract passToChild(data: { [key: string]: any }): boolean;
 
   public getAJOElementList(recursively: boolean): AJOElement[] {
     // the list return
     const list: AJOElement[] = [];
-    if (recursively) {
-      list.push(this);
-    }
     // the currrent object
     const obj: AJOElement = this;
     // for all property of the object
@@ -78,7 +74,6 @@ export default abstract class AJOElement {
     });
     return list;
   }
-  
 
   /**
    * Make the changes in the object
@@ -124,23 +119,22 @@ export default abstract class AJOElement {
   public setUpdate(update: (() => void) | null) {
     this.update = update;
   }
-  public isDeleteOrder(json : { [key: string]: any }, elem : AJOElement | null) : boolean {
+
+  protected isDeleteOrder(json: { [key: string]: any }, elem: AJOElement | null): boolean {
     let res = false;
-    if(json[AJOInstance.getDeleteField()] === true){
+    if (json[AJOInstance.getDeleteField()] === true) {
       res = true;
-    }
-    else if(elem!=null){
-      if(AJOInstance.isDeepEqual()){
-        res = json[AJOInstance.getDeleteField()] === this.getAjoIdentifier() &&
-        json[AJOInstance.getTypeField()] === elem.getAjoType();
-      }
-      else {
+    } else if (elem != null) {
+      if (AJOInstance.isDeepEqual()) {
+        res =
+          json[AJOInstance.getDeleteField()] === this.getAjoIdentifier() &&
+          json[AJOInstance.getTypeField()] === elem.getAjoType();
+      } else {
         res = json[AJOInstance.getDeleteField()] === this.getAjoIdentifier();
       }
+    } else {
+      res = json[AJOInstance.getDeleteField()] === this.getAjoIdentifier();
     }
     return res;
   }
-}
-function delay(ms: number) {
-  return new Promise( resolve => setTimeout(resolve, ms) );
 }

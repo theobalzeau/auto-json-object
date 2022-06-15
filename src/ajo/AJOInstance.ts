@@ -216,7 +216,7 @@ export default class AJOInstance {
    * Convert the json source to AJOObject instance with data
    * @param json the json source
    */
-  public static convert(json: { [key: string]: any }, parent : AJOElement | null = null): AJOObject | null {
+  public static convert(json: { [key: string]: any }, parent: AJOElement | null = null): AJOObject | null {
     // the variable that contains the result
     let res = null;
 

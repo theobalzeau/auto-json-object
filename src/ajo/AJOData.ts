@@ -47,7 +47,7 @@ export default class AJOData extends AJOField {
     // return the result
     return res;
   }
-  public override applyDataRec(data: { [key: string]: any; }, first: boolean): boolean {
+  public override applyDataRec(data: { [key: string]: any }, first: boolean): boolean {
     // boolean that indicates if the object has changed
     let res = false;
 
@@ -69,11 +69,11 @@ export default class AJOData extends AJOField {
     // return the result
     return res;
   }
-  protected override passToChild(data: { [key: string]: any }): boolean {
+  private passToChild(data: { [key: string]: any }): boolean {
     let ajoElementList = this.getAJOElementList(false);
     let res = false;
     for (let i = 0; i < ajoElementList.length; i++) {
-      res = ajoElementList[i].applyDataRec(data, false) || res;
+      res = (ajoElementList[i] as AJOElement).applyDataRec(data, false) || res;
     }
     return res;
   }

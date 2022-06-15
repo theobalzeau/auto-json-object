@@ -45,14 +45,14 @@ AJOInstance.setDeleteField('_ajo_delete');
  * TEST n°1
  * AJOData orpheline
  */
-test("AJOData (1) orpheline", () => {
-    let passwordJson = {
-        hash: "hash",
-        salt: "salt"
-    }
-    let passwordAjo = new Password();
-    passwordAjo.applyData(passwordJson);
-    expect(passwordAjo.hash.get()).toBe("hash");
+test('AJOData (1) orpheline', () => {
+  let passwordJson = {
+    hash: 'hash',
+    salt: 'salt',
+  };
+  let passwordAjo = new Password();
+  passwordAjo.applyData(passwordJson);
+  expect(passwordAjo.hash.get()).toBe('hash');
 });
 
 /**

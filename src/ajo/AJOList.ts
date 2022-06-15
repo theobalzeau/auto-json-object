@@ -3,18 +3,18 @@ import AJOField from './AJOField';
 import AJOInstance from './AJOInstance';
 import AJOObject from './AJOObject';
 
-export default class AJOList extends AJOField {
+export default class AJOList<Type extends AJOObject> extends AJOField {
   /**
    * Variable list contains all AJOObject of this AJOList
-   * @type {AJOObject[]}
+   * @type {Type[]}
    */
-  private list: AJOObject[];
+  private list: Type[];
 
   /**
    * Variable sortFunc contains the function to sort the list on each update
-   * @type {( (a: AJOObject, b: AJOObject) => number ) | null}
+   * @type {( (a: Type, b: Type) => number ) | null}
    */
-  private sortFunc: ((a: AJOObject, b: AJOObject) => number) | null;
+  private sortFunc: ((a: Type, b: Type) => number) | null;
 
   /**
    * Constructor of AJOList
@@ -25,7 +25,7 @@ export default class AJOList extends AJOField {
   constructor(
     field: string[] | string | null = null,
     ajoParent: AJOElement | null = null,
-    sortFunc: ((a: AJOObject, b: AJOObject) => number) | null = null,
+    sortFunc: ((a: Type, b: Type) => number) | null = null,
   ) {
     super(field, ajoParent);
     this.sortFunc = sortFunc;
@@ -42,16 +42,16 @@ export default class AJOList extends AJOField {
   }
 
   /**
-   * Function used to add an AJOObject to the list
+   * Function used to add an Type to the list
    * @param obj the object to add
    */
-  public push(obj: AJOObject) {
+  public push(obj: Type) {
     this.list.push(obj);
     this.sort();
   }
 
   /**
-   * Function used to remove an AJOObject from the list
+   * Function used to remove an Type from the list
    * @param i the index of the object to remove
    */
   public remove(i: number) {
@@ -63,7 +63,7 @@ export default class AJOList extends AJOField {
    * Function used to get element of the list by index
    * @param i the index
    */
-  public get(i: number): AJOObject {
+  public get(i: number): Type {
     return this.list[i];
   }
 
@@ -81,13 +81,13 @@ export default class AJOList extends AJOField {
     // go throw the json array
     for (const elem of array) {
       //
-      let ajoElem: AJOObject | null = null;
+      let ajoElem: Type | null = null;
 
       // boolean that indicate if the object exist in the list
       let found: boolean = false;
       let i: number = 0;
       while (!found && i < this.list.length) {
-        const ajoElement: AJOObject = this.list[i];
+        const ajoElement: Type = this.list[i];
 
         // check if the object correspond to the json
         if (ajoElement.equals(elem)) {
@@ -103,12 +103,17 @@ export default class AJOList extends AJOField {
       if (ajoElem == null) {
         // check if the object its not a delete order
         if (!this.isDeleteOrder(elem, null)) {
-          // Convert the json to an AJOObject
-          ajoElem = AJOInstance.convert(elem, this);
-          // if element has been convert
-          if (ajoElem != null) {
-            res = true;
-            this.push(ajoElem);
+          // Convert the json to an Type
+          try {
+            ajoElem = AJOInstance.convert(elem, this) as Type;
+            // if element has been convert
+            if (ajoElem != null) {
+                this.push(ajoElem);
+                res = true;
+            }
+          }
+          catch (e) {
+            console.log("Your AJOList cannot take this type.")
           }
         }
       } else {
@@ -125,7 +130,7 @@ export default class AJOList extends AJOField {
     }
     return res;
   }
-  public override applyDataRec(data: { [key: string]: any; }, first: boolean): boolean {
+  public override applyDataRec(data: { [key: string]: any }, first: boolean): boolean {
     // boolean that indicates if the object has changed
     let res = false;
 
@@ -145,13 +150,6 @@ export default class AJOList extends AJOField {
       }
     }
     return res;
-  }
-  public applyData(data: { [key: string]: any }) {
-    return false;
-  }
-
-  protected override passToChild(data: { [key: string]: any }): boolean {
-    return false;
   }
 
   public override getAJOElementList(recursively: boolean): AJOElement[] {
