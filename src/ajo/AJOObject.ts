@@ -51,7 +51,7 @@ export default abstract class AJOObject extends AJOElement {
    * Get the ajoIdentifier of this AJOObject
    * @returns {any} the ajoIdentifier of this AJOObject
    */
-  public getAjoIdentifier(): any {
+  public override getAjoIdentifier(): any {
     return this.ajoIdentifier;
   }
 
@@ -66,7 +66,7 @@ export default abstract class AJOObject extends AJOElement {
    * Get the ajoType of this AJOObject
    * @returns {any} the ajoType of this AJOObject
    */
-  public getAjoType(): string {
+  public override getAjoType(): string {
     return this.ajoType;
   }
 
@@ -126,10 +126,15 @@ export default abstract class AJOObject extends AJOElement {
         this.setAjoIdentifier(ajoIdentifier);
       }
     }
+    console.log("HERE2 : ", first)
 
     if (first && this.getAjoParent() instanceof AJOField) {
       let parent = this.getAjoParent() as AJOField;
-      parent.applyDataRec([data], true)
+      console.log("HERE3")
+      console.log(data)
+      let json : any = {}
+      json[parent.getField()] = data
+      parent.applyDataRec(json, true)
     }
 
     if (applyData) {
@@ -183,9 +188,12 @@ export default abstract class AJOObject extends AJOElement {
     let allObject: AJOObject[] = this.getAJOObjectList(true);
     let allJson: { [key: string]: any }[] = AJOUtils.getAllJsonObject(data);
     
+    console.log(allObject)
     for (const json of allJson) {
       for (const child of allObject) {
         if (child.equals(json)) {
+          console.log("HERE1")
+          console.log(json)
           res = child.applyDataRec(json, true) || res;
         }
       }

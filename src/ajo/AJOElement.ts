@@ -1,3 +1,4 @@
+import AJOInstance from './AJOInstance';
 import AJOObject from './AJOObject';
 
 /**
@@ -47,6 +48,7 @@ export default abstract class AJOElement {
   /*public abstract applyData(data: { [key: string]: any }, applyParent: boolean): boolean;*/
 
   public abstract getAjoIdentifier(): any;
+  public abstract getAjoType(): any;
   protected abstract passToChild(data: { [key: string]: any }): boolean;
 
   public getAJOElementList(recursively: boolean): AJOElement[] {
@@ -121,6 +123,22 @@ export default abstract class AJOElement {
    */
   public setUpdate(update: (() => void) | null) {
     this.update = update;
+  }
+  public isDeleteOrder(json : { [key: string]: any }, elem : AJOElement | null) : boolean {
+    let res = false;
+    if(json[AJOInstance.getDeleteField()] === true){
+      res = true;
+    }
+    else if(elem!=null){
+      if(AJOInstance.isDeepEqual()){
+        res = json[AJOInstance.getDeleteField()] === this.getAjoIdentifier() &&
+        json[AJOInstance.getTypeField()] === elem.getAjoType();
+      }
+      else {
+        res = json[AJOInstance.getDeleteField()] === this.getAjoIdentifier();
+      }
+    }
+    return res;
   }
 }
 function delay(ms: number) {

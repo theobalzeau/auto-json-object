@@ -20,12 +20,22 @@ export default abstract class AJOField extends AJOElement {
     }
   }
 
+  public getField() : string {
+    return this.fieldList[0];
+  }
+
   public override getAjoIdentifier() : any {
     let res : any = false;
-    if(this.getAjoParent() instanceof AJOObject) {
-      res = (this.getAjoParent() as AJOObject).getAjoIdentifier();
-    } else if(this.getAjoParent()!=undefined) {  
+    if(this.getAjoParent() instanceof AJOElement) {
       res = (this.getAjoParent() as AJOElement).getAjoIdentifier();
+    }
+    return res;
+  }
+
+  public override getAjoType() : any {
+    let res : any = false;
+    if(this.getAjoParent() instanceof AJOElement) {
+      res = (this.getAjoParent() as AJOElement).getAjoType();
     }
     return res;
   }

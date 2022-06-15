@@ -102,20 +102,18 @@ export default class AJOList extends AJOField {
       // if the object doesn't exist
       if (ajoElem == null) {
         // check if the object its not a delete order
-        if (elem[AJOInstance.getDeleteField()] === undefined) {
+        if (!this.isDeleteOrder(elem, null)) {
           // Convert the json to an AJOObject
-          ajoElem = AJOInstance.convert(elem);
+          ajoElem = AJOInstance.convert(elem, this);
           // if element has been convert
           if (ajoElem != null) {
-            ajoElem.setAjoParent(this);
             res = true;
             this.push(ajoElem);
           }
         }
       } else {
         // element exists
-        if (elem[AJOInstance.getDeleteField()] === true ||
-        elem[AJOInstance.getDeleteField()] === this.getAjoIdentifier()) {
+        if (this.isDeleteOrder(elem, ajoElem)) {
           // delete the element
           res = true;
           this.remove(i);

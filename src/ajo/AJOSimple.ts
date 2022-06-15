@@ -19,14 +19,22 @@ export default class AJOSimple extends AJOField {
     this.elem = elem;
   }
 
-  public getJsonElem(data: { [key: string]: any } | { [key: string]: any }[]) : any {
+  public getJsonElem(data: { [key: string]: any } | { [key: string]: any }[]) : { [key: string]: any } | null {
     let currentElem = this.get();
     let elem = null;
     if(currentElem!=null) {
-      if(data instanceof Array&&data.length>0) {
-        elem = data[0];
+      if(data instanceof Array) {
+        let found = false;
+        let i = 0;
+        while (!found&&i<data.length){
+          if(currentElem.equals(data[i])){
+            elem = data[i];
+            found = true;
+          }
+          i += 1;
+        }
       }
-      else if(currentElem.get {
+      else if(currentElem.equals(data)) {
         elem = data;
       }
     }
@@ -38,23 +46,34 @@ export default class AJOSimple extends AJOField {
         elem = data;
       }
     }
+    return elem;
   }
 
-  public applyData(data: { [key: string]: any } | { [key: string]: any }[]) {
+  public applyData(data: any) {
+
+    console.log("data")
+    console.log(data)
+
     let res = false;
     let jsonElem = this.getJsonElem(data)
-    let elem = null;
-    if(data instanceof Array&&data.length>0) {
-      elem = data[0];
+    if(jsonElem!=null){
+      let elem = this.get();
+      if(this.isDeleteOrder(jsonElem, elem)){
+        if(elem!=null){
+          console.log("DELETE")
+          this.set(null);
+        }
+      }
+      else if(elem==null){
+        res = true;
+        let ajoElem = AJOInstance.convert(jsonElem, this);
+        this.set(ajoElem)
+      }
+      else {
+        res = elem.applyDataRec(jsonElem, false) || res;
+      }
     }
-    else {
-      elem = data;
-    }
-
-    if (elem != null) {
-      let ajoElem = AJOInstance.convert(elem);
-    }
-    return false;
+    return res;
   }
 
   protected override passToChild(data: { [key: string]: any }): boolean {
@@ -83,7 +102,6 @@ export default class AJOSimple extends AJOField {
   public override applyDataRec(data: { [key: string]: any; }, first: boolean): boolean {
   // boolean that indicates if the object has changed
     let res = false;
-
     // go throw json source only if the data was applyed to the parent
     if (!this.hasParent()) {
       res = this.applyData(data) || res;

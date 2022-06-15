@@ -1,3 +1,4 @@
+import AJOElement from './AJOElement';
 import AJOObject from './AJOObject';
 
 /**
@@ -215,7 +216,7 @@ export default class AJOInstance {
    * Convert the json source to AJOObject instance with data
    * @param json the json source
    */
-  public static convert(json: { [key: string]: any }): AJOObject | null {
+  public static convert(json: { [key: string]: any }, parent : AJOElement | null = null): AJOObject | null {
     // the variable that contains the result
     let res = null;
 
@@ -226,6 +227,7 @@ export default class AJOInstance {
     if (elem != null) {
       // set the data of the AJOObject
       elem.applyData(json);
+      elem.setAjoParent(parent);
       res = elem;
     }
 

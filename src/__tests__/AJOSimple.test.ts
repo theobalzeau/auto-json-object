@@ -1,7 +1,6 @@
 import AJOElement from '../ajo/AJOElement';
 import AJOObject from '../ajo/AJOObject';
 import AJOProperties from '../ajo/AJOProperties';
-import AJOList from '../ajo/AJOList';
 import AJOInstance from '../ajo/AJOInstance';
 import AJOSimple from '../ajo/AJOSimple';
 /**
@@ -11,11 +10,11 @@ import AJOSimple from '../ajo/AJOSimple';
 class Role extends AJOObject {
   static override _TYPE: string = 'Role';
 
-  text: AJOProperties;
+  name: AJOProperties;
 
   constructor(ajoParent: AJOElement | null = null, ajoIdentifier?: any) {
     super(Role._TYPE, ajoParent, ajoIdentifier);
-    this.text = new AJOProperties('text', this);
+    this.name = new AJOProperties('name', this);
   }
 
   public static build() {
@@ -95,21 +94,45 @@ AJOInstance.setDeleteField('_ajo_delete');
  * TEST n°2
  * AJOList inside AJOObject + update
  */
-test("AJOList (2) list in object", () => {
-    let userJson = {
-        _id: "1",
-        name: "theobalzeau",
-        _type: "User",
-        role: [
-            {
-                _id: "1",
-                _type: "Role",
-                text: "text1"
-            }
-        ]
-    }
-    let userAjo = new User();
-    // first fit
-    userAjo.applyData(userJson);
-    expect((userAjo.role.get() as Role).text.get()).toBe("text3updated");
-});
+let userJson = {
+    _id: "1",
+    name: "theobalzeau",
+    _type: "User",
+    role: [
+        {
+            _id: "3",
+            _type: "Role",
+            name: "Admin"
+        }
+    ]
+}
+let userAjo = new User();
+// first fit
+console.log("START APPLY")
+userAjo.applyData(userJson);
+
+let json2 = {
+  _id: "2",
+  name: "SuperAdmin",
+  _type: "Role",
+  parent: [
+      {
+          _id: "3",
+          _type: "Role",
+          name: "AdminUpdated"
+      }
+  ]
+}
+console.log("START APPLY")
+userAjo.applyData(json2);
+console.log((userAjo.role.get() as Role).name.get()=="AdminUpdated");
+
+let json3 = {
+  _ajo_delete: "1",
+  _id: "3",
+  _type: "Role",
+  name: "AdminUpdated"
+}
+console.log("START APPLY")
+userAjo.applyData(json3);
+console.log(userAjo.role.get() == null);
