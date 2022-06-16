@@ -92,16 +92,16 @@ let jsonOrpheline4 = {
 };
 
 test('AJOSimple (1) orpheline inflate / update / delete root', () => {
-  let simple = new AJOSimple("", null);
-  simple.applyData(jsonOrpheline1)
+  let simple = new AJOSimple('', null);
+  simple.applyData(jsonOrpheline1);
   simple.applyData(jsonOrpheline2);
   simple.applyData(jsonOrpheline3);
   expect(simple.get()).toBe(null);
 });
 
 test('AJOSimple (2) orpheline inflate / update / delete indide AJOObject', () => {
-  let simple2 = new AJOSimple("", null);
-  simple2.applyData(jsonOrpheline1)
+  let simple2 = new AJOSimple('', null);
+  simple2.applyData(jsonOrpheline1);
   simple2.applyData(jsonOrpheline2);
   simple2.applyData(jsonOrpheline4);
   expect((simple2.get() as User).role.get()).toBe(null);

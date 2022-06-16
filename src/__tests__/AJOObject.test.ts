@@ -41,7 +41,7 @@ class User extends AJOObject {
   static override _TYPE: string = 'User';
 
   name: AJOProperties;
-  actionList : AJOList<Action>;
+  actionList: AJOList<Action>;
 
   constructor(ajoParent: AJOElement | null = null, ajoIdentifier?: any) {
     super(User._TYPE, ajoParent, ajoIdentifier);
@@ -74,45 +74,47 @@ let json1 = {
   _type: 'User',
   action: [
     {
-        _id: '2',
-        type: 4,
-        _type: 'Action',
-        role: {
-            _id: '3',
-            _type: 'Role',
-            name: 'Admin',
-        }
+      _id: '2',
+      type: 4,
+      _type: 'Action',
+      role: {
+        _id: '3',
+        _type: 'Role',
+        name: 'Admin',
+      },
     },
     {
-        _id: '4',
-        type: 4,
-        _type: 'Action',
-        role: {
-            _id: '5',
-            _type: 'Role',
-            name: 'Membre',
-        }
+      _id: '4',
+      type: 4,
+      _type: 'Action',
+      role: {
+        _id: '5',
+        _type: 'Role',
+        name: 'Membre',
+      },
     },
     {
-        _id: '6',
-        type: 4,
-        _type: 'Action',
-        role: [{
-            _id: '7',
-            _type: 'Role',
-            name: 'Visiteur',
-        }]
-    }
+      _id: '6',
+      type: 4,
+      _type: 'Action',
+      role: [
+        {
+          _id: '7',
+          _type: 'Role',
+          name: 'Visiteur',
+        },
+      ],
+    },
   ],
 };
 
-/*test('AJOSimple (3) inflate in AJOObject', () => {
+test('AJOSimple (3) inflate in AJOObject', () => {
   let userAjo = new User();
   userAjo.applyData(json1);
   expect(userAjo.actionList.size()).toBe(3);
-});*/
-//test('AJOSimple (4) inflate in AJOObject', () => {
-    let userAjo = new User();
-    userAjo.applyData(json1);
-    console.log(userAjo.actionList.get(0).role.get()?.name.get());
-  //});
+});
+test('AJOSimple (4) inflate in AJOObject', () => {
+  let userAjo = new User();
+  userAjo.applyData(json1);
+  expect(userAjo.actionList.get(2).role.get()?.name.get()).toBe('Visiteur');
+});

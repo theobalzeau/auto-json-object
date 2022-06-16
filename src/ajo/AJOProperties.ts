@@ -76,11 +76,14 @@ export default class AJOProperties extends AJOField {
       res = true;
     }
 
+    // Make the update
+    super.makeUpdate(res);
+
     // return the result
     return res;
   }
 
-  public override applyDataRec(data: { [key: string]: any }, first: boolean): boolean {
+  public override applyDataPartiel(data: { [key: string]: any }, first: boolean): boolean {
     // boolean that indicates if the object has changed
     let res = false;
 
@@ -104,9 +107,6 @@ export default class AJOProperties extends AJOField {
       res = this.set(value);
     }
 
-    // Make the update
-    super.makeUpdate(res);
-
     // return the result
     return res;
   }
@@ -119,6 +119,6 @@ export default class AJOProperties extends AJOField {
    * @returns {boolean} true if their is any change in the object or in the child
    */
   public override applyData(data: { [key: string]: any }): boolean {
-    return this.applyDataRec(data, false);
+    return this.applyDataPartiel(data, false);
   }
 }

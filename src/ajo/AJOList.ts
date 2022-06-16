@@ -108,12 +108,11 @@ export default class AJOList<Type extends AJOObject> extends AJOField {
             ajoElem = AJOInstance.convert(elem, this) as Type;
             // if element has been convert
             if (ajoElem != null) {
-                this.push(ajoElem);
-                res = true;
+              this.push(ajoElem);
+              res = true;
             }
-          }
-          catch (e) {
-            console.log("Your AJOList cannot take this type.")
+          } catch (e) {
+            console.error('Your AJOList cannot take this type.');
           }
         }
       } else {
@@ -124,13 +123,13 @@ export default class AJOList<Type extends AJOObject> extends AJOField {
           this.remove(i);
         } else {
           // update the element
-          res = ajoElem.applyDataRec(elem, false) || res;
+          res = ajoElem.applyDataPartiel(elem, false) || res;
         }
       }
     }
     return res;
   }
-  public override applyDataRec(data: { [key: string]: any }, first: boolean): boolean {
+  public override applyDataPartiel(data: { [key: string]: any }, first: boolean): boolean {
     // boolean that indicates if the object has changed
     let res = false;
 

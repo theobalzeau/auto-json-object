@@ -1,5 +1,6 @@
 import AJOInstance from './AJOInstance';
 import AJOObject from './AJOObject';
+import AJOState from './AJOState';
 
 /**
  * AJOElement is the base class for all AJO classes.
@@ -15,6 +16,13 @@ export default abstract class AJOElement {
    * @type {AJOElement | null}
    */
   private ajoParent: AJOElement | null;
+
+  /**
+   * Variable ajoParent contains the parent of this object, null if this object is the root
+   * @type {AJOState | null}
+   */
+  private ajoState: AJOState<AJOElement> | null;
+
   /**
    * Function called when there is a change in this object or in these child objects
    * @type {(() => void) | null}
@@ -26,16 +34,21 @@ export default abstract class AJOElement {
    * @param ajoParent the parent of this object, null if the object is the root
    * @param update the update function
    */
-  constructor(ajoParent: AJOElement | null = null, update: (() => void) | null = null) {
+  constructor(
+    ajoParent: AJOElement | null = null,
+    update: (() => void) | null = null,
+    ajoState: AJOState<AJOElement> | null = null,
+  ) {
     this.ajoParent = ajoParent;
     this.update = update;
+    this.ajoState = ajoState;
   }
 
   public hasParent(): boolean {
     return this.ajoParent != null;
   }
 
-  public abstract applyDataRec(data: { [key: string]: any }, first: boolean): boolean;
+  public abstract applyDataPartiel(data: { [key: string]: any }, first: boolean): boolean;
   public abstract applyData(data: { [key: string]: any }): boolean;
 
   /**
@@ -85,6 +98,20 @@ export default abstract class AJOElement {
       if (this.update != null) {
         this.update();
       }
+      this.stateUpdate();
+    }
+  }
+
+  /**
+   * Make the changes in the object
+   * If there change call the update function
+   * @param change
+   */
+  public stateUpdate() {
+    if (this.ajoState != null) {
+      this.ajoState.makeUpdate();
+    } else if (this.hasParent()) {
+      this.getAjoParent()?.stateUpdate();
     }
   }
 
@@ -94,6 +121,22 @@ export default abstract class AJOElement {
    */
   public getAjoParent(): AJOElement | null {
     return this.ajoParent;
+  }
+
+  /**
+   * Get the parent of this object
+   * @returns {AJOState | null} the parent of this object
+   */
+  public getAjoState(): AJOState<AJOElement> | null {
+    return this.ajoState;
+  }
+
+  /**
+   * Get the parent of this object
+   * @returns {AJOState | null} the parent of this object
+   */
+  public setAjoState(ajoState: AJOState<AJOElement> | null): void {
+    this.ajoState = ajoState;
   }
 
   /**

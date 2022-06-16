@@ -108,7 +108,7 @@ export default abstract class AJOObject extends AJOElement {
     return res;
   }
 
-  public override applyDataRec(data: { [key: string]: any }, first: boolean): boolean {
+  public override applyDataPartiel(data: { [key: string]: any }, first: boolean): boolean {
     // boolean that indicates if the object has changed
     let res = false;
 
@@ -132,7 +132,7 @@ export default abstract class AJOObject extends AJOElement {
 
       let json: any = {};
       json[parent.getField()] = data;
-      parent.applyDataRec(json, true);
+      parent.applyDataPartiel(json, true);
     }
 
     if (applyData) {
@@ -154,7 +154,7 @@ export default abstract class AJOObject extends AJOElement {
       // for each child
       const ajoElement: AJOElement = list[i];
       // apply the data to the child
-      res = ajoElement.applyDataRec(data, true) || res;
+      res = ajoElement.applyDataPartiel(data, true) || res;
     }
     return res;
   }
@@ -175,7 +175,7 @@ export default abstract class AJOObject extends AJOElement {
   }
 
   /**
-   * Apply data to the object and its child conform to the mode of the AJOInstance
+   * Apply data to the object and its child 
    * return true if their is any change in the hierarchy
    * @param data the json souce
    * @returns {boolean} true if their is any change in the object or in the child
@@ -189,7 +189,7 @@ export default abstract class AJOObject extends AJOElement {
     for (const json of allJson) {
       for (const child of allObject) {
         if (child.equals(json)) {
-          res = child.applyDataRec(json, true) || res;
+          res = child.applyDataPartiel(json, true) || res;
         }
       }
     }

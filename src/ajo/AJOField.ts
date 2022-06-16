@@ -21,7 +21,6 @@ export default abstract class AJOField extends AJOElement {
     }
   }
 
-
   /**
    * Get all AJOObject in the object
    * @returns {AJOObject[]}
@@ -37,7 +36,7 @@ export default abstract class AJOField extends AJOElement {
     return listAJOObject;
   }
 
-  public applyDataToAllChild(data: { [key: string]: any }) : boolean {
+  public applyDataToAllChild(data: { [key: string]: any }): boolean {
     let res = false;
 
     let allObject: AJOObject[] = this.getAJOObjectList(true);
@@ -46,7 +45,7 @@ export default abstract class AJOField extends AJOElement {
     for (const json of allJson) {
       for (const child of allObject) {
         if (child.equals(json)) {
-          res = child.applyDataRec(json, true) || res;
+          res = child.applyDataPartiel(json, true) || res;
         }
       }
     }
@@ -82,11 +81,11 @@ export default abstract class AJOField extends AJOElement {
     for (const json of allJson) {
       for (const child of allObject) {
         if (child.equals(json)) {
-          res = child.applyDataRec(json, true) || res;
+          res = child.applyDataPartiel(json, true) || res;
         }
       }
     }
-    res = this.applyDataRec(data, false) || res;
+    res = this.applyDataPartiel(data, false) || res;
     return res;
   }
 }

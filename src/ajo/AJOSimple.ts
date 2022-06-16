@@ -60,12 +60,11 @@ export default class AJOSimple<Type extends AJOObject> extends AJOField {
         let ajoElem = AJOInstance.convert(jsonElem, this);
         try {
           this.set(ajoElem as Type);
-        }
-        catch (e) {
-          console.log("Your AJOSimple cannot take this type.")
+        } catch (e) {
+          console.error('Your AJOSimple cannot take this type.');
         }
       } else {
-        res = (elem as AJOElement).applyDataRec(jsonElem, false) || res;
+        res = (elem as AJOElement).applyDataPartiel(jsonElem, false) || res;
       }
     }
     return res;
@@ -86,7 +85,7 @@ export default class AJOSimple<Type extends AJOObject> extends AJOField {
     return list;
   }
 
-  public override applyDataRec(data: { [key: string]: any }, first: boolean): boolean {
+  public override applyDataPartiel(data: { [key: string]: any }, first: boolean): boolean {
     // boolean that indicates if the object has changed
     let res = false;
     // go throw json source only if the data was applyed to the parent

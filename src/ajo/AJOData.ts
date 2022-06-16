@@ -32,11 +32,10 @@ export default class AJOData extends AJOField {
       res = this.passToChild(data) || res;
     } else if (applyParent) {
       // get the json subdocument for all field
-      for (let i = 0; i < this.fieldList.length; i++) {
-        if (data[this.fieldList[i]] !== undefined) {
+      for (const field of this.fieldList) {
+        if (data[field] !== undefined) {
           // apply subdocument to childs
-          //res = super.applyAjoPolicy(data[this.field[i]], applyParent) || res;
-          res = this.passToChild(data[this.fieldList[i]]) || res;
+          res = this.passToChild(data[field]) || res;
         }
       }
     }
@@ -47,18 +46,17 @@ export default class AJOData extends AJOField {
     // return the result
     return res;
   }
-  public override applyDataRec(data: { [key: string]: any }, first: boolean): boolean {
+  public override applyDataPartiel(data: { [key: string]: any }, first: boolean): boolean {
     // boolean that indicates if the object has changed
     let res = false;
 
     // go throw json source only if the data was applyed to the parent
     if (first) {
       // get the json subdocument for all field
-      for (let i = 0; i < this.fieldList.length; i++) {
-        if (data[this.fieldList[i]] !== undefined) {
+      for (const field of this.fieldList) {
+        if (data[field] !== undefined) {
           // apply subdocument to childs
-          //res = super.applyAjoPolicy(data[this.field[i]], applyParent) || res;
-          res = this.passToChild(data[this.fieldList[i]]) || res;
+          res = this.passToChild(data[field]) || res;
         }
       }
     }
@@ -70,10 +68,10 @@ export default class AJOData extends AJOField {
     return res;
   }
   private passToChild(data: { [key: string]: any }): boolean {
-    let ajoElementList = this.getAJOElementList(false);
+    const ajoElementList = this.getAJOElementList(false);
     let res = false;
-    for (let i = 0; i < ajoElementList.length; i++) {
-      res = (ajoElementList[i] as AJOElement).applyDataRec(data, false) || res;
+    for (const ajoElement of ajoElementList) {
+      res = (ajoElement as AJOElement).applyDataPartiel(data, false) || res;
     }
     return res;
   }
