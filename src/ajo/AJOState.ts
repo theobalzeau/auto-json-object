@@ -34,7 +34,7 @@ export default class AJOState<Type extends AJOElement> {
 
   public recreate(): AJOState<Type> {
     const newState = new AJOState(this.get());
-    let update = this.getUpdate();
+    const update = this.getUpdate();
     if (update != null) {
       update(newState);
     }
@@ -43,7 +43,7 @@ export default class AJOState<Type extends AJOElement> {
 
   public makeUpdate(): AJOState<Type> {
     const newState = new AJOState(this.get());
-    let update = this.getUpdate();
+    const update = this.getUpdate();
     if (update != null) {
       update(newState);
     }

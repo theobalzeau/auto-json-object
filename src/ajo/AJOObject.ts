@@ -38,7 +38,7 @@ export default abstract class AJOObject extends AJOElement {
     this.ajoType = ajoType;
 
     // if there is an identifier the object is already created
-    this.create = ajoIdentifier != undefined && ajoIdentifier != null;
+    this.create = ajoIdentifier !== undefined && ajoIdentifier != null;
   }
   /**
    * Set the ajoIdentifier of this AJOObject
@@ -116,10 +116,10 @@ export default abstract class AJOObject extends AJOElement {
     const applyData = this.equals(data);
     if (applyData) {
       // get the identifier of the json source
-      let ajoIdentifier = data[AJOInstance.getIdentifierField()];
+      const ajoIdentifier = data[AJOInstance.getIdentifierField()];
 
       // check if the identifier exists
-      if (ajoIdentifier != undefined) {
+      if (ajoIdentifier !== undefined) {
         // create the object with this identifier
         res = true;
         this.setCreate(true);
@@ -128,9 +128,9 @@ export default abstract class AJOObject extends AJOElement {
     }
 
     if (first && this.getAjoParent() instanceof AJOField) {
-      let parent = this.getAjoParent() as AJOField;
+      const parent = this.getAjoParent() as AJOField;
 
-      let json: any = {};
+      const json: any = {};
       json[parent.getField()] = data;
       parent.applyDataPartiel(json, true);
     }
@@ -164,8 +164,8 @@ export default abstract class AJOObject extends AJOElement {
    * @returns {AJOObject[]}
    */
   public getAJOObjectList(recursively: boolean): AJOObject[] {
-    let listAJOObject: AJOObject[] = [this];
-    let listAJOElement: AJOElement[] = this.getAJOElementList(recursively);
+    const listAJOObject: AJOObject[] = [this];
+    const listAJOElement: AJOElement[] = this.getAJOElementList(recursively);
     for (const ajoElement of listAJOElement) {
       if (ajoElement instanceof AJOObject) {
         listAJOObject.push(ajoElement as AJOObject);
@@ -175,7 +175,7 @@ export default abstract class AJOObject extends AJOElement {
   }
 
   /**
-   * Apply data to the object and its child 
+   * Apply data to the object and its child
    * return true if their is any change in the hierarchy
    * @param data the json souce
    * @returns {boolean} true if their is any change in the object or in the child
@@ -183,8 +183,8 @@ export default abstract class AJOObject extends AJOElement {
   public override applyData(data: { [key: string]: any }): boolean {
     let res = false;
 
-    let allObject: AJOObject[] = this.getAJOObjectList(true);
-    let allJson: { [key: string]: any }[] = AJOUtils.getAllJsonObject(data);
+    const allObject: AJOObject[] = this.getAJOObjectList(true);
+    const allJson: { [key: string]: any }[] = AJOUtils.getAllJsonObject(data);
 
     for (const json of allJson) {
       for (const child of allObject) {

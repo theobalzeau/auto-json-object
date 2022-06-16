@@ -88,15 +88,15 @@ export default class AJOProperties extends AJOField {
     let res = false;
 
     let found = false;
-    let value = undefined;
+    let value;
     let i = 0;
     while (!found && i < this.fieldList.length) {
       if (this.fieldList[i] in data) {
-        if (this.fieldList[i] == undefined && this.isOverrideOnUndefined()) {
+        if (this.fieldList[i] === undefined && this.isOverrideOnUndefined()) {
           found = true;
           value = data[this.fieldList[i]];
         }
-        if (this.fieldList[i] != undefined) {
+        if (this.fieldList[i] !== undefined) {
           found = true;
           value = data[this.fieldList[i]];
         }

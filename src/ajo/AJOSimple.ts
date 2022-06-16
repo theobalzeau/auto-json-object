@@ -20,7 +20,7 @@ export default class AJOSimple<Type extends AJOObject> extends AJOField {
   }
 
   public getJsonElem(data: { [key: string]: any } | { [key: string]: any }[]): { [key: string]: any } | null {
-    let currentElem = this.get();
+    const currentElem = this.get();
     let elem = null;
     if (currentElem != null) {
       if (data instanceof Array) {
@@ -48,20 +48,20 @@ export default class AJOSimple<Type extends AJOObject> extends AJOField {
 
   public applyElem(data: any) {
     let res = false;
-    let jsonElem = this.getJsonElem(data);
+    const jsonElem = this.getJsonElem(data);
     if (jsonElem != null) {
-      let elem = this.get();
+      const elem = this.get();
       if (this.isDeleteOrder(jsonElem, elem)) {
         if (elem != null) {
           this.set(null);
         }
       } else if (elem == null) {
         res = true;
-        let ajoElem = AJOInstance.convert(jsonElem, this);
+        const ajoElem = AJOInstance.convert(jsonElem, this);
         try {
           this.set(ajoElem as Type);
         } catch (e) {
-          console.error('Your AJOSimple cannot take this type.');
+          throw new Error('Your AJOSimple cannot take this type.');
         }
       } else {
         res = (elem as AJOElement).applyDataPartiel(jsonElem, false) || res;
@@ -72,11 +72,11 @@ export default class AJOSimple<Type extends AJOObject> extends AJOField {
 
   public override getAJOElementList(recursively: boolean): AJOElement[] {
     const list: AJOElement[] = [];
-    let elem = this.get();
+    const elem = this.get();
     if (elem != null) {
       list.push(elem);
       if (recursively) {
-        let recList = elem.getAJOElementList(recursively);
+        const recList = elem.getAJOElementList(recursively);
         for (const recElem of recList) {
           list.push(recElem);
         }

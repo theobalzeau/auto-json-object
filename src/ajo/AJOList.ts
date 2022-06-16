@@ -36,7 +36,7 @@ export default class AJOList<Type extends AJOObject> extends AJOField {
    * Function used to sort the AJOList
    */
   public sort() {
-    if (this.sortFunc != undefined) {
+    if (this.sortFunc != null) {
       this.list.sort(this.sortFunc);
     }
   }
@@ -112,7 +112,7 @@ export default class AJOList<Type extends AJOObject> extends AJOField {
               res = true;
             }
           } catch (e) {
-            console.error('Your AJOList cannot take this type.');
+            throw new Error('Your AJOList cannot take this type.');
           }
         }
       } else {
@@ -152,12 +152,12 @@ export default class AJOList<Type extends AJOObject> extends AJOField {
   }
 
   public override getAJOElementList(recursively: boolean): AJOElement[] {
-    let list: AJOElement[] = [...this.list];
+    const list: AJOElement[] = [...this.list];
     if (recursively) {
-      for (let i = 0; i < this.list.length; i++) {
-        let childList = this.list[i].getAJOElementList(recursively);
-        for (let j = 0; j < childList.length; j++) {
-          list.push(childList[j]);
+      for (const elem of this.list) {
+        const childList = elem.getAJOElementList(recursively);
+        for (const child of childList) {
+          list.push(child);
         }
       }
     }
