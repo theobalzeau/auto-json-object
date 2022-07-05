@@ -49,4 +49,16 @@ export default class AJOState<Type extends AJOElement> {
     }
     return newState;
   }
+
+  public applyData(data: { [key: string]: any }, update:boolean = false): boolean {
+    let res = update;
+
+    res = this.get()!.applyData(data) || res;
+
+    if(res){
+      this.makeUpdate();
+    }
+
+    return res;
+  }
 }

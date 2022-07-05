@@ -21,20 +21,6 @@ class Comment extends AJOObject {
     return new Comment();
   }
 }
-class Comment2 extends AJOObject {
-  static override _TYPE: string = 'Comment';
-
-  text: AJOProperties;
-
-  constructor(ajoParent: AJOElement | null = null, ajoIdentifier?: any) {
-    super(Comment._TYPE, ajoParent, ajoIdentifier);
-    this.text = new AJOProperties('text', this);
-  }
-
-  public static build() {
-    return new Comment();
-  }
-}
 /**
  * Exemple of an AJOList inside AJOObject
  */

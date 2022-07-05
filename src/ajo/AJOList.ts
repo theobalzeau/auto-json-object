@@ -59,12 +59,24 @@ export default class AJOList<Type extends AJOObject> extends AJOField {
     this.sort();
   }
 
+  public reset() {
+    this.list = [];
+  }
+
   /**
    * Function used to get element of the list by index
    * @param i the index
    */
   public get(i: number): Type {
     return this.list[i];
+  }
+
+   public getList(): Type[] {
+    return this.list;
+  }
+
+  public map(calback: (value: Type, index: number, array: Type[]) => any) : any[] {
+    return this.list.map(calback);
   }
 
   /**
@@ -148,6 +160,10 @@ export default class AJOList<Type extends AJOObject> extends AJOField {
         }
       }
     }
+
+    // Make the update
+    super.makeUpdate(res);
+
     return res;
   }
 

@@ -107,6 +107,10 @@ export default class AJOProperties extends AJOField {
       res = this.set(value);
     }
 
+    
+    // Make the update
+    super.makeUpdate(res);
+
     // return the result
     return res;
   }

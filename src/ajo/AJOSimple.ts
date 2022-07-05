@@ -103,6 +103,10 @@ export default class AJOSimple<Type extends AJOObject> extends AJOField {
         }
       }
     }
+
+    // Make the update
+    super.makeUpdate(res);
+
     return res;
   }
 }
