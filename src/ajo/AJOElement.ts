@@ -165,18 +165,20 @@ export default abstract class AJOElement {
 
   protected isDeleteOrder(json: { [key: string]: any }, elem: AJOElement | null): boolean {
     let res = false;
-    if (json[AJOInstance.getDeleteField()] === true) {
-      res = true;
-    } else if (elem != null) {
-      if (AJOInstance.isDeepEqual()) {
-        res =
-          json[AJOInstance.getDeleteField()] === this.getAjoIdentifier() &&
-          json[AJOInstance.getTypeField()] === elem.getAjoType();
+    if(json!=undefined){  
+      if (json[AJOInstance.getDeleteField()] === true) {
+        res = true;
+      } else if (elem != null) {
+        if (AJOInstance.isDeepEqual()) {
+          res =
+            json[AJOInstance.getDeleteField()] === this.getAjoIdentifier() &&
+            json[AJOInstance.getTypeField()] === elem.getAjoType();
+        } else {
+          res = json[AJOInstance.getDeleteField()] === this.getAjoIdentifier();
+        }
       } else {
         res = json[AJOInstance.getDeleteField()] === this.getAjoIdentifier();
       }
-    } else {
-      res = json[AJOInstance.getDeleteField()] === this.getAjoIdentifier();
     }
     return res;
   }

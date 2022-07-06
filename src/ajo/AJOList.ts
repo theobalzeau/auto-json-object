@@ -87,55 +87,57 @@ export default class AJOList<Type extends AJOObject> extends AJOField {
   }
   private applyArray(array: any): boolean {
     let res = false;
-    if (!(array instanceof Array)) {
-      array = [array];
-    }
-    // go throw the json array
-    for (const elem of array) {
-      //
-      let ajoElem: Type | null = null;
-
-      // boolean that indicate if the object exist in the list
-      let found: boolean = false;
-      let i: number = 0;
-      while (!found && i < this.list.length) {
-        const ajoElement: Type = this.list[i];
-
-        // check if the object correspond to the json
-        if (ajoElement.equals(elem)) {
-          // object found
-          ajoElem = ajoElement;
-          found = true;
-        } else {
-          // we go to the next object
-          i++;
-        }
+    if(array!=undefined){ 
+      if (!(array instanceof Array)) {
+        array = [array];
       }
-      // if the object doesn't exist
-      if (ajoElem == null) {
-        // check if the object its not a delete order
-        if (!this.isDeleteOrder(elem, null)) {
-          // Convert the json to an Type
-          try {
-            ajoElem = AJOInstance.convert(elem, this) as Type;
-            // if element has been convert
-            if (ajoElem != null) {
-              this.push(ajoElem);
-              res = true;
-            }
-          } catch (e) {
-            throw new Error('Your AJOList cannot take this type.');
+      // go throw the json array
+      for (const elem of array) {
+        //
+        let ajoElem: Type | null = null;
+  
+        // boolean that indicate if the object exist in the list
+        let found: boolean = false;
+        let i: number = 0;
+        while (!found && i < this.list.length) {
+          const ajoElement: Type = this.list[i];
+  
+          // check if the object correspond to the json
+          if (ajoElement.equals(elem)) {
+            // object found
+            ajoElem = ajoElement;
+            found = true;
+          } else {
+            // we go to the next object
+            i++;
           }
         }
-      } else {
-        // element exists
-        if (this.isDeleteOrder(elem, ajoElem)) {
-          // delete the element
-          res = true;
-          this.remove(i);
+        // if the object doesn't exist
+        if (ajoElem == null) {
+          // check if the object its not a delete order
+          if (!this.isDeleteOrder(elem, null)) {
+            // Convert the json to an Type
+            try {
+              ajoElem = AJOInstance.convert(elem, this) as Type;
+              // if element has been convert
+              if (ajoElem != null) {
+                this.push(ajoElem);
+                res = true;
+              }
+            } catch (e) {
+              throw new Error('Your AJOList cannot take this type.');
+            }
+          }
         } else {
-          // update the element
-          res = ajoElem.applyDataPartiel(elem, false) || res;
+          // element exists
+          if (this.isDeleteOrder(elem, ajoElem)) {
+            // delete the element
+            res = true;
+            this.remove(i);
+          } else {
+            // update the element
+            res = ajoElem.applyDataPartiel(elem, false) || res;
+          }
         }
       }
     }

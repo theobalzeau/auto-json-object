@@ -48,23 +48,25 @@ export default class AJOSimple<Type extends AJOObject> extends AJOField {
 
   public applyElem(data: any) {
     let res = false;
-    const jsonElem = this.getJsonElem(data);
-    if (jsonElem != null) {
-      const elem = this.get();
-      if (this.isDeleteOrder(jsonElem, elem)) {
-        if (elem != null) {
-          this.set(null);
+    if(data!=undefined){ 
+      const jsonElem = this.getJsonElem(data);
+      if (jsonElem != null) {
+        const elem = this.get();
+        if (this.isDeleteOrder(jsonElem, elem)) {
+          if (elem != null) {
+            this.set(null);
+          }
+        } else if (elem == null) {
+          res = true;
+          const ajoElem = AJOInstance.convert(jsonElem, this);
+          try {
+            this.set(ajoElem as Type);
+          } catch (e) {
+            throw new Error('Your AJOSimple cannot take this type.');
+          }
+        } else {
+          res = (elem as AJOElement).applyDataPartiel(jsonElem, false) || res;
         }
-      } else if (elem == null) {
-        res = true;
-        const ajoElem = AJOInstance.convert(jsonElem, this);
-        try {
-          this.set(ajoElem as Type);
-        } catch (e) {
-          throw new Error('Your AJOSimple cannot take this type.');
-        }
-      } else {
-        res = (elem as AJOElement).applyDataPartiel(jsonElem, false) || res;
       }
     }
     return res;
