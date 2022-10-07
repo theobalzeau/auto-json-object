@@ -108,8 +108,8 @@ export default class AJOInstance {
    * Change the deleteField of the global AJOInstance
    * @param deleteField the new deleteField
    */
-  public static setDeepEqual(deleteField: string) {
-    AJOInstance.get().deleteField = deleteField;
+  public static setDeepEqual(deepEqual: boolean) {
+    AJOInstance.get().deepEqual = deepEqual;
   }
   /**
    * Get the identifierField of global AJOInstance

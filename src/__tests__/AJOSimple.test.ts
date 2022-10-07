@@ -100,7 +100,7 @@ test('AJOSimple (1) orpheline inflate / update / delete root', () => {
 });
 
 test('AJOSimple (2) orpheline inflate / update / delete indide AJOObject', () => {
-  let simple2 = new AJOSimple('', null);
+  let simple2 = new AJOSimple('', null, false);
   simple2.applyData(jsonOrpheline1);
   simple2.applyData(jsonOrpheline2);
   simple2.applyData(jsonOrpheline4);

@@ -6,7 +6,7 @@
       "outDir": "./lib",
       "strict": true
     },
-    "include": ["src"],
+    "include": ["src", "AJOObject.test.ts"],
     "exclude": ["node_modules", "**/__tests__/*"]
   }
   

@@ -9,7 +9,7 @@ export default abstract class AJOElement {
   /**
    * All private field to prevent circular recursion
    */
-  protected static PRIVATE_FIELD_LIST: string[] = ['ajoParent', 'create', 'update', 'field'];
+  protected static PRIVATE_FIELD_LIST: string[] = ['ajoParent', 'create', 'update', 'field', "next"];
 
   /**
    * Variable ajoParent contains the parent of this object, null if this object is the root
@@ -165,17 +165,13 @@ export default abstract class AJOElement {
 
   protected isDeleteOrder(json: { [key: string]: any }, elem: AJOElement | null): boolean {
     let res = false;
-    if(json!=undefined){  
-      if (json[AJOInstance.getDeleteField()] === true) {
-        res = true;
-      } else if (elem != null) {
-        if (AJOInstance.isDeepEqual()) {
-          res =
-            json[AJOInstance.getDeleteField()] === this.getAjoIdentifier() &&
-            json[AJOInstance.getTypeField()] === elem.getAjoType();
-        } else {
-          res = json[AJOInstance.getDeleteField()] === this.getAjoIdentifier();
-        }
+    if (json[AJOInstance.getDeleteField()] === true || json[AJOInstance.getDeleteField()] === "True" || json[AJOInstance.getDeleteField()] === "true") {
+      res = true;
+    } else if (elem != null) {
+      if (AJOInstance.isDeepEqual()) {
+        res =
+          json[AJOInstance.getDeleteField()] === this.getAjoIdentifier() &&
+          json[AJOInstance.getTypeField()] === elem.getAjoType();
       } else {
         res = json[AJOInstance.getDeleteField()] === this.getAjoIdentifier();
       }

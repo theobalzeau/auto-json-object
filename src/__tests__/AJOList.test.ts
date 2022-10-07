@@ -3,6 +3,7 @@ import AJOObject from '../ajo/AJOObject';
 import AJOProperties from '../ajo/AJOProperties';
 import AJOList from '../ajo/AJOList';
 import AJOInstance from '../ajo/AJOInstance';
+import AJOSimple from '../ajo/AJOSimple';
 /**
  * Exemple of an AJOObject that will
  * be stored in a AJOList
@@ -21,6 +22,21 @@ class Comment extends AJOObject {
     return new Comment();
   }
 }
+class Role extends AJOObject{
+  static override _TYPE: string = 'Role';
+
+  name: AJOProperties;
+
+  constructor(ajoParent: AJOElement | null = null, ajoIdentifier?: any) {
+    super(Role._TYPE, ajoParent, ajoIdentifier);
+    this.name = new AJOProperties('name', this);
+  }
+
+  public static build() {
+    return new Role();
+  }
+}
+
 /**
  * Exemple of an AJOList inside AJOObject
  */
@@ -29,11 +45,13 @@ class User extends AJOObject {
 
   name: AJOProperties;
   commentList: AJOList<Comment>;
+  role: AJOSimple<Role>;
 
   constructor(ajoParent: AJOElement | null = null, ajoIdentifier?: any) {
     super(User._TYPE, ajoParent, ajoIdentifier);
     this.name = new AJOProperties('name', this);
-    this.commentList = new AJOList<Comment>('comment', this);
+    this.commentList = new AJOList<Comment>('comment', Comment._TYPE, this);
+    this.role = new AJOSimple<Role>('has_role', this);
   }
 
   public static build() {
@@ -46,6 +64,7 @@ class User extends AJOObject {
  */
 AJOInstance.add(User.build());
 AJOInstance.add(Comment.build());
+AJOInstance.add(Role.build());
 AJOInstance.setIdentifierField('_id');
 AJOInstance.setTypeField('_type');
 AJOInstance.setDeleteField('_ajo_delete');
@@ -55,40 +74,42 @@ AJOInstance.setDeleteField('_ajo_delete');
  * AJOList orpheline
  */
 test('AJOList (1) orpheline', () => {
-  let list = new AJOList();
-  let jsonArray1 = [
+  let list = new AJOList<User>(undefined, [User._TYPE]);
+  let jsonArray3 = [
+              {
+                  "_id": 17,
+                  "_id_str": "17",
+                  "_type": "User",
+                  "active": false,
+                  "delete": false,
+                  "email": "ge1@gmail.com",
+                  "first": true,
+                  "firstname": "Théo",
+                  "has_role": [
+                      {
+                          "_id": 8,
+                          "_id_str": "8",
+                          "_type": "Role",
+                          "name": "Utilisateur"
+                      }
+                  ],
+                  "lastname": "BALZEAU",
+                  "password": "$2a$12$y5c4RVzcSbiAZt76fdZ6ReilxdJ8l5oR6C3hIzvt1HYQ9B7erwKy2",
+                  "root": false,
+                  "set": false
+              }
+  ];
+  list.applyData(jsonArray3);
+
+  let jsonArray4 = [
     {
       _id: '1',
       _type: 'Comment',
       text: 'text1',
-    },
-    {
-      _id: '2',
-      _type: 'Comment',
-      text: 'text2',
-    },
-    {
-      _id: '3',
-      _type: 'Comment',
-      text: 'text3',
-    },
-  ];
-  list.applyData(jsonArray1);
-  let jsonArray2 = [
-    {
-      _id: '2',
-      _ajo_delete: true,
-      _type: 'Comment',
-      text: 'text2',
-    },
-    {
-      _id: '3',
-      _type: 'Comment',
-      text: 'text3updated',
-    },
-  ];
-  list.applyData(jsonArray2);
-  expect((list.get(1) as Comment).text.get()).toBe('text3updated');
+    }
+];
+  list.applyData(jsonArray4);
+  expect(list.get(list.size()-1) instanceof Comment).toBe(false);
 });
 
 /**

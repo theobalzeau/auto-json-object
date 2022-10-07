@@ -44,8 +44,9 @@ export default abstract class AJOObject extends AJOElement {
    * Set the ajoIdentifier of this AJOObject
    * @param ajoIdentifier the new ajoIdentifier
    */
-  private setAjoIdentifier(ajoIdentifier: any) {
+  public setAjoIdentifier(ajoIdentifier: any) {
     this.ajoIdentifier = ajoIdentifier;
+    this.setCreate(ajoIdentifier !== undefined && ajoIdentifier != null);
   }
   /**
    * Get the ajoIdentifier of this AJOObject
@@ -96,7 +97,12 @@ export default abstract class AJOObject extends AJOElement {
       }
     } else if (typeof data === 'object') {
       if (!this.isCreate()) {
-        res = true;
+        if (AJOInstance.isDeepEqual()) {
+          res = this.getAjoType() === data[AJOInstance.getTypeField()];
+        }
+        else {
+          res = true;
+        }
       } else if (AJOInstance.isDeepEqual()) {
         res =
           this.getAjoIdentifier() === data[AJOInstance.getIdentifierField()] &&

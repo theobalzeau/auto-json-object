@@ -116,3 +116,65 @@ test('AJOState (1) update in hierarchy', () => {
 
   expect(countUpdateRole).toBeGreaterThan(0);
 });
+
+
+export default class Address extends AJOObject {
+
+  public static _TYPE: string = 'Address';
+
+  public name: AJOProperties;
+  public postal_code: AJOProperties;
+  public city: AJOProperties;
+  public number_and_street: AJOProperties;
+
+  constructor() {
+      super(Address._TYPE);
+
+      this.name = new AJOProperties('name');
+      this.postal_code = new AJOProperties('postal_code');
+      this.city = new AJOProperties('city');
+      this.number_and_street = new AJOProperties('number_and_street');
+  }
+
+  public static build(): Address {
+      return new Address();
+  }
+}
+
+AJOInstance.add(Address.build());
+
+test('AJOState (2) ajolist orpheline', () => {
+  const state = new AJOState<AJOList<Address>>(new AJOList<Address>(undefined, Address._TYPE));
+  state.applyData(
+    [
+      {
+        "_id": "274b2fb8-cc69-4bfd-a15a-e0fce1b028b1", 
+        "_id_str": "274b2fb8-cc69-4bfd-a15a-e0fce1b028b1", 
+        "_type": "Address", 
+        "city": "Apremont", 
+        "name": null, 
+        "number_and_street": "76 Route de Myans", 
+        "postal_code": "73190"
+      }, 
+      {
+        "_id": "73aad18e-32d5-4556-b8c2-2c41839fb439", 
+        "_id_str": "73aad18e-32d5-4556-b8c2-2c41839fb439", 
+        "_type": "Address", 
+        "city": "Apremont", 
+        "name": "Maison", 
+        "number_and_street": "76 Route de Myans", 
+        "postal_code": "73190"
+      }, 
+      {
+        "_id": "cd19590d-bb4a-43a2-974f-ebded62bfa0d", 
+        "_id_str": "cd19590d-bb4a-43a2-974f-ebded62bfa0d", 
+        "_type": "Address", 
+        "city": "Chamb\u00e9ry", 
+        "name": "Th\u00e9\u00e2tre Charles-Dullin", 
+        "number_and_street": "Place du Th\u00e9\u00e2tre", 
+        "postal_code": 73000
+      }
+    ]
+  )
+  expect(state.get()!.get(0).getAjoIdentifier()).toBe('274b2fb8-cc69-4bfd-a15a-e0fce1b028b1');
+});

@@ -5,17 +5,19 @@ import AJOElement from './AJOElement';
 
 export default class AJOSimple<Type extends AJOObject> extends AJOField {
   private elem: Type | null;
+  private override:boolean;
 
-  constructor(field: string[] | string, ajoParent: AJOElement | null = null) {
+  constructor(field: string[] | string, ajoParent: AJOElement | null = null, override: boolean = true) {
     super(field, ajoParent);
     this.elem = null;
+    this.override = override;
   }
 
   public get(): Type | null {
     return this.elem;
   }
 
-  private set(elem: Type | null) {
+  public set(elem: Type | null) {
     this.elem = elem;
   }
 
@@ -33,8 +35,15 @@ export default class AJOSimple<Type extends AJOObject> extends AJOField {
           }
           i += 1;
         }
-      } else if (currentElem.equals(data)) {
+        if(!found&&this.override){
+          elem = data[0];
+        }
+      } 
+      else if (currentElem.equals(data)) {
         elem = data;
+      }
+      else if (this.override){
+          elem = data;
       }
     } else {
       if (data instanceof Array && data.length > 0) {
@@ -48,15 +57,17 @@ export default class AJOSimple<Type extends AJOObject> extends AJOField {
 
   public applyElem(data: any) {
     let res = false;
-    if(data!=undefined){ 
+    if(data!==undefined){
+      
       const jsonElem = this.getJsonElem(data);
+      
       if (jsonElem != null) {
         const elem = this.get();
         if (this.isDeleteOrder(jsonElem, elem)) {
           if (elem != null) {
             this.set(null);
           }
-        } else if (elem == null) {
+        } else if (elem == null||(!elem.equals(jsonElem)&&this.override)) {
           res = true;
           const ajoElem = AJOInstance.convert(jsonElem, this);
           try {

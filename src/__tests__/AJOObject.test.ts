@@ -46,7 +46,7 @@ class User extends AJOObject {
   constructor(ajoParent: AJOElement | null = null, ajoIdentifier?: any) {
     super(User._TYPE, ajoParent, ajoIdentifier);
     this.name = new AJOProperties('name', this);
-    this.actionList = new AJOList('action', this);
+    this.actionList = new AJOList('action', Action._TYPE, this);
   }
 
   public static build() {

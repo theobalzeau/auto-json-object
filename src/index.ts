@@ -6,5 +6,6 @@ import AJOProperties from './ajo/AJOProperties';
 import AJOState from './ajo/AJOState';
 import AJOObject from './ajo/AJOObject';
 import AJOElement from './ajo/AJOElement';
+import AJOUpdater from './ajo/AJOUpdater';
 
-export { AJOInstance, AJOData, AJOList, AJOSimple, AJOProperties, AJOState, AJOObject, AJOElement };
+export { AJOInstance, AJOData, AJOList, AJOSimple, AJOProperties, AJOState, AJOObject, AJOElement, AJOUpdater };
